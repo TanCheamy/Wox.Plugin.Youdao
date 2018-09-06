@@ -1,12 +1,12 @@
 {
-  "ID":"339FF4D7C9C544379DF65596E161070C",
-  "ActionKeyword":"fy",
-  "Name":"有道智云翻译",
-  "Description":"有道智云翻译，自动检测语言",
-  "Author":"qianlifeng, foolment, ferstar",
-  "Version":"0.0.2",
+  "ID":"1df380aeb19711e896f8529269fb1459",
+  "ActionKeyword":"fd",
+  "Name":"有道翻译-单词记录",
+  "Description":"有道翻译，附加单词自动记录功能",
+  "Author":"qianlifeng, foolment, ferstar, Zeroto521",
+  "Version":"0.0.1",
   "Language":"python",
-  "Website":"https://github.com/ferstar/Youdao.wox",
+  "Website":"https://github.com/Zeroto521/Youdao.wox",
   "IcoPath": "img\\youdao.ico",
   "ExecuteFileName":"youdao.py"
 }

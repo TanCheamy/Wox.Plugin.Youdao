@@ -148,8 +148,10 @@ class Main(Wox):
     def __get_proxies(self):
         proxies = {}
         if self.proxy and self.proxy.get("enabled") and self.proxy.get("server"):
-            proxies["http"] = "http://{}:{}".format(self.proxy.get("server"), self.proxy.get("port"))
-            proxies["https"] = "http://{}:{}".format(self.proxy.get("server"), self.proxy.get("port"))
+            proxies["http"] = "http://{}:{}".format(
+                self.proxy.get("server"), self.proxy.get("port"))
+            proxies["https"] = "http://{}:{}".format(
+                self.proxy.get("server"), self.proxy.get("port"))
         return proxies
 
 
