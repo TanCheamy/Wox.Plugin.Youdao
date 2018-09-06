@@ -1,2 +1,11 @@
 # vscode local history file
 .history/
+
+# wox
+wox.py
+
+# python cache
+__pycache__/
+
+# record file
+*.csv

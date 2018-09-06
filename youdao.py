@@ -1,56 +1,29 @@
 import http.client
 import json
+import os
 import urllib
 import webbrowser
 
+from constant import *
 from wox import Wox
-
-QUERY_URL = 'http://dict.youdao.com/search?q='
-EMPTY_RESULT = {
-    'Title': 'Start to translate between Chinese and English',
-    'SubTitle': 'Powered by youdao api, Python3.x only.',
-    'IcoPath': 'Img\\youdao.ico'
-}
-SERVER_DOWN = {
-    'Title': '网易在线翻译服务暂不可用',
-    'SubTitle': '请待服务恢复后再试',
-    'IcoPath': 'Img\\youdao.ico'
-}
-ERROR_INFO = {
-    "101": "缺少必填的参数，出现这个情况还可能是et的值和实际加密方式不对应",
-    "102": "不支持的语言类型",
-    "103": "翻译文本过长",
-    "104": "不支持的API类型",
-    "105": "不支持的签名类型",
-    "106": "不支持的响应类型",
-    "107": "不支持的传输加密类型",
-    "108": "appKey无效，注册账号，登录后台创建应用和实例并完成绑定，可获得应用ID和密钥等信息，其中应用ID就是appKey（注意不是应用密钥）",
-    "109": "batchLog格式不正确",
-    "110": "无相关服务的有效实例",
-    "111": "开发者账号无效",
-    "113": "q不能为空",
-    "201": "解密失败，可能为DES,BASE64,URLDecode的错误",
-    "202": "签名检验失败",
-    "203": "访问IP地址不在可访问IP列表",
-    "205": "请求的接口与选择的接入方式不一致",
-    "301": "辞典查询失败",
-    "302": "翻译查询失败",
-    "303": "服务端的其它异常",
-    "401": "账户已经欠费",
-    "411": "访问频率受限,请稍后访问",
-    "2005": "ext参数不对",
-    "2006": "不支持的voice",
-}
 
 
 class Main(Wox):
 
     def query(self, param):
+        """依次处理 Wox 队列信息
+
+        Arguments:
+            param {string} -- 命令
+
+        Returns:
+            list -- 消息列表
+        """
+
         result = []
         q = param.strip()
         if not q:
             return [EMPTY_RESULT]
-
         response = self.yd_api(q)
         if not response:
             return [{
@@ -73,6 +46,8 @@ class Main(Wox):
         translation = response.get('translation', [])
         basic = response.get('basic', {})
         web = response.get('web', [])
+        if translation:
+            self.record(q, translation[0])
 
         if translation:
             result.append({
@@ -119,7 +94,30 @@ class Main(Wox):
                 })
         return result
 
+    @staticmethod
+    def record(query, translation):
+        """单词记录
+        """
+        fileName = 'record.csv'
+        if not os.path.exists(fileName):
+            with open(fileName, 'w', encoding='utf-8') as f:
+                mes = "{}, {}\n".format("query", "translation")
+                f.write(mes)
+
+        with open(fileName, 'a+', encoding='utf-8') as f:
+            mes = "{}, {}\n".format(query, translation)
+            f.write(mes)
+
     def open_url(self, query, url=None):
+        """查询关键词
+
+        Arguments:
+            query {string} -- 关键词
+
+        Keyword Arguments:
+            url {string} -- 查询链接 (default: {None})
+        """
+
         if url:
             webbrowser.open(url + query)
         else:
@@ -127,6 +125,15 @@ class Main(Wox):
 
     @staticmethod
     def yd_api(q):
+        """youdao api
+
+        Arguments:
+            q {string} -- 查询词
+
+        Returns:
+            string -- 查询结果
+        """
+
         payload = "q={}&from=Auto&to=Auto".format(urllib.parse.quote(q))
         headers = {
             'Content-Type': "application/x-www-form-urlencoded",
@@ -137,15 +144,22 @@ class Main(Wox):
             conn = http.client.HTTPSConnection("aidemo.youdao.com")
             conn.request("POST", "/trans", payload, headers)
             res = conn.getresponse()
-            if res.code == 200:
-                return json.loads(res.read().decode("utf-8"))
         except Exception:
             pass
+        else:
+            if res.code == 200:
+                return json.loads(res.read().decode("utf-8"))
         finally:
             if conn:
                 conn.close()
 
-    def __get_proxies(self):
+    def _get_proxies(self):
+        """代理设置
+
+        Returns:
+            dict -- 返回包含代理信息的头文件
+        """
+
         proxies = {}
         if self.proxy and self.proxy.get("enabled") and self.proxy.get("server"):
             proxies["http"] = "http://{}:{}".format(
