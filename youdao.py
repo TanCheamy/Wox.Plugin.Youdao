@@ -1,8 +1,12 @@
+import copy
 import http.client
 import json
 import os
+import time
 import urllib
 import webbrowser
+
+import pyperclip
 
 from constant import *
 from wox import Wox
@@ -23,90 +27,105 @@ class Main(Wox):
         result = []
         q = param.strip()
         if not q:
-            return [EMPTY_RESULT]
+            tit = 'Start to translate between Chinese and English'
+            subtit = 'Powered by youdao api, Python3.x only.'
+            return [self.genformat(tit, subtit)]
+
         response = self.yd_api(q)
         if not response:
-            return [{
-                'Title': '网络请求失败',
-                'SubTitle': '请检查网络连接是否正常',
-                'IcoPath': 'Img\\youdao.ico'
-            }]
+            tit = '网络请求失败'
+            subtit = '请检查网络连接是否正常'
+            return [self.genformat(tit, subtit)]
+
         errCode = response.get('errorCode', '')
         if not errCode:
-            return [SERVER_DOWN]
+            tit = '网易在线翻译服务暂不可用'
+            subtit = '请待服务恢复后再试'
+            return [self.genformat(tit, subtit)]
 
         if errCode != '0':
-            return [{
-                'Title': ERROR_INFO.get(errCode, '未知错误'),
-                'SubTitle': 'errorCode=%s' % errCode,
-                'IcoPath': 'Img\\youdao.ico'
-            }]
+            tit = ERROR_INFO.get(errCode, '未知错误')
+            subtit = 'errorCode=%s' % errCode
+            return [self.genformat(tit, subtit)]
 
         tSpeakUrl = response.get('tSpeakUrl', '')
         translation = response.get('translation', [])
         basic = response.get('basic', {})
         web = response.get('web', [])
-        if translation:
-            self.record(q, translation[0])
 
         if translation:
-            result.append({
-                'Title': translation[0],
-                'SubTitle': '有道翻译',
-                'IcoPath': 'Img\\youdao.ico',
-                'JsonRPCAction': {
-                    'method': 'open_url',
-                    'parameters': [q, QUERY_URL]
-                }
-            })
+            tit = translation[0]
+            subtit = '点击复制到剪贴板并收藏'
+            method = 'copy2clipboard'
+            parameters = [q, translation[0]]
+            res = self.genaction(tit, subtit, method, parameters)
+            result.append(res)
 
         if tSpeakUrl:
-            result.append({
-                'Title': '获取发音',
-                'SubTitle': '点击可跳转 - 有道翻译',
-                'IcoPath': 'Img\\youdao.ico',
-                'JsonRPCAction': {
-                    'method': 'open_url',
-                    'parameters': [tSpeakUrl]
-                }
-            })
+            tit = '获取发音'
+            subtit = '点击跳转 - 有道翻译'
+            method = 'open_url'
+            parameters = [tSpeakUrl]
+            result.append(self.genaction(tit, subtit, method, parameters))
+
         if basic:
             for i in basic['explains']:
-                result.append({
-                    'Title': i,
-                    'SubTitle': '{} - 基本词典'.format(response.get('query', '')),
-                    'IcoPath': 'Img\\youdao.ico',
-                    'JsonRPCAction': {
-                        'method': 'open_url',
-                        'parameters': [q, QUERY_URL]
-                    }
-                })
+                subtit = '{} - 基本词典'.format(response.get('query', ''))
+                method = 'open_url'
+                parameters = [q, QUERY_URL]
+                result.append(self.genaction(i, subtit, method, parameters))
         if web:
             for i in web:
-                result.append({
-                    'Title': ','.join(i['value']),
-                    'SubTitle': '{} - 网络释义'.format(i['key']),
-                    'IcoPath': 'Img\\youdao.ico',
-                    'JsonRPCAction': {
-                        'method': 'open_url',
-                        'parameters': [q, QUERY_URL]
-                    }
-                })
+                tit = translation[0]
+                subtit = '{} - 网络释义'.format(i['key'])
+                method = 'open_url'
+                parameters = [q, QUERY_URL]
+                result.append(self.genaction(tit, subtit, method, parameters))
         return result
+
+    @staticmethod
+    def genformat(tit, subtit):
+        res = copy.deepcopy(TEMPLATE)
+        res['Title'] = tit
+        res['SubTitle'] = subtit
+
+        return res
+
+    @staticmethod
+    def genaction(tit, subtit, method, actparam):
+        res = copy.deepcopy(TEMPLATE)
+        res['Title'] = tit
+        res['SubTitle'] = subtit
+
+        action = copy.deepcopy(ACTION_TEMPLATE)
+        action['JsonRPCAction']['method'] = method
+        action['JsonRPCAction']['parameters'] = actparam
+        res.update(action)
+
+        return res
+
+    def copy2clipboard(self, query, translation):
+        """复制到剪切板
+
+        Arguments:
+            value -- 复制内容
+        """
+        self.record(query, translation)  # 记录
+        pyperclip.copy(str(translation).strip())
 
     @staticmethod
     def record(query, translation):
         """单词记录
         """
         fileName = 'record.csv'
-        if not os.path.exists(fileName):
-            with open(fileName, 'w', encoding='utf-8') as f:
-                mes = "{}, {}\n".format("query", "translation")
-                f.write(mes)
-
+        message = "{}, {}, {}\n"
         with open(fileName, 'a+', encoding='utf-8') as f:
-            mes = "{}, {}\n".format(query, translation)
-            f.write(mes)
+            if os.path.exists(fileName):
+                date = time.strftime("%Y-%m-%d", time.localtime())
+                message = message.format(query, translation, date)
+            else:
+                message = message.format("query", "translation", "date")
+            f.write(message)
 
     def open_url(self, query, url=None):
         """查询关键词

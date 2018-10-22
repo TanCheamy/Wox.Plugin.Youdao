@@ -1,16 +1,20 @@
+import copy
+
 QUERY_URL = 'http://dict.youdao.com/search?q='
 
-EMPTY_RESULT = {
-    'Title': 'Start to translate between Chinese and English',
-    'SubTitle': 'Powered by youdao api, Python3.x only.',
-    'IcoPath': 'Img\\youdao.ico'
+TEMPLATE = {
+    'Title': '',
+    'SubTitle': '',
+    'IcoPath': 'Images\\youdao.ico',
 }
 
-SERVER_DOWN = {
-    'Title': '网易在线翻译服务暂不可用',
-    'SubTitle': '请待服务恢复后再试',
-    'IcoPath': 'Img\\youdao.ico'
+ACTION_TEMPLATE = {
+    'JsonRPCAction': {
+        'method': '',
+        'parameters': [],
+    }
 }
+
 
 ERROR_INFO = {
     "101": "缺少必填的参数，出现这个情况还可能是et的值和实际加密方式不对应",

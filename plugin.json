@@ -7,6 +7,6 @@
   "Version":"0.0.1",
   "Language":"python",
   "Website":"https://github.com/Zeroto521/Youdao.wox",
-  "IcoPath": "img\\youdao.ico",
+  "IcoPath": "Images\\youdao.ico",
   "ExecuteFileName":"youdao.py"
 }
