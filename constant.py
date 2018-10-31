@@ -1,5 +1,7 @@
 import copy
 
+PATH = r'C:\Users\Zero\Documents'
+
 QUERY_URL = 'http://dict.youdao.com/search?q='
 
 TEMPLATE = {

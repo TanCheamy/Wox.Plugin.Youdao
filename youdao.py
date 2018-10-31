@@ -117,7 +117,7 @@ class Main(Wox):
     def record(query, translation):
         """单词记录
         """
-        fileName = 'record.csv'
+        fileName = os.path.join(PATH, '单词收藏.csv')
         message = "{}, {}, {}\n"
         with open(fileName, 'a+', encoding='utf-8') as f:
             if os.path.exists(fileName):
