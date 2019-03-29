@@ -18,5 +18,4 @@
 
 ## 依赖
 
-1. `Python3.x`
-2. 第三方库 `pyperclip`
+-   `pyperclip`
