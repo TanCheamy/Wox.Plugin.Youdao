@@ -4,7 +4,7 @@
     "Name": "有道翻译-单词记录",
     "Description": "有道翻译，附加单词自动记录功能",
     "Author": "qianlifeng, foolment, ferstar, Zeroto521",
-    "Version": "0.0.5",
+    "Version": "0.0.6",
     "Language": "python",
     "Website": "https://github.com/Zeroto521/Youdao.wox",
     "IcoPath": "Images\\youdao.ico",

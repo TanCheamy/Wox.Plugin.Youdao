@@ -1,6 +1,9 @@
-import copy
+# -*- coding: utf-8 -*-
 
-PATH = r'C:\Users\Zero\Documents'
+from getpass import getuser
+
+username = getuser()
+PATH = r'C:\Users\{}\Documents'.format(username)
 
 QUERY_URL = 'http://dict.youdao.com/search?q='
 
