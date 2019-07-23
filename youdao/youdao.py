@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import copy
 import http.client
 import json
@@ -8,8 +10,9 @@ import webbrowser
 
 import pyperclip
 
-from constant import *
 from wox import Wox
+
+from .constants import *
 
 
 class Main(Wox):
@@ -186,7 +189,3 @@ class Main(Wox):
             proxies["https"] = "http://{}:{}".format(
                 self.proxy.get("server"), self.proxy.get("port"))
         return proxies
-
-
-if __name__ == '__main__':
-    Main()
