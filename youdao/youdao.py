@@ -78,10 +78,10 @@ class Main(Wox):
                 parameters = [q, QUERY_URL]
                 result.append(self.genaction(i, subtit, method, parameters))
         if web:
+            method = 'open_url'
             for i in web:
                 tit = translation[0]
                 subtit = '{} - 网络释义'.format(i['key'])
-                method = 'open_url'
                 parameters = [q, QUERY_URL]
                 result.append(self.genaction(tit, subtit, method, parameters))
         return result
