@@ -7,9 +7,9 @@ import os
 import time
 import urllib
 import webbrowser
-from win32com.client import Dispatch
 
 import pyperclip
+from win32com.client import Dispatch
 
 from wox import Wox
 
@@ -59,18 +59,18 @@ class Main(Wox):
 
         if translation:
             tit = translation[0]
-            subtit = '复制到剪贴板并发音及收藏'
-            method = 'copyclipboardAndSpeak'
-            parameters = [q, translation[0]]
-            result.append(self.genaction(tit, subtit, method, parameters))
-
-        if translation:
-            tit = translation[0]
             subtit = '点击复制到剪贴板并收藏'
             method = 'copy2clipboard'
             parameters = [q, translation[0]]
             res = self.genaction(tit, subtit, method, parameters)
             result.append(res)
+
+        if translation:
+            tit = q
+            subtit = '点击发音'
+            method = 'speak'
+            parameters = [q]
+            result.append(self.genaction(tit, subtit, method, parameters))
 
         if basic:
             for i in basic['explains']:
@@ -117,16 +117,14 @@ class Main(Wox):
         self.record(query, translation)  # 记录
         pyperclip.copy(str(translation).strip())
 
-    def copyclipboardAndSpeak(self, query, translation):
-        """复制到剪贴板并发音
+    def speak(self, source):
+        """发音
 
         :param query: source
-        :param translation: target
         :return:
         """
-        self.copy2clipboard(query, translation)
-        speak = Dispatch("SAPI.SpVoice")
-        speak.Speak(query)
+        spVoice = Dispatch("SAPI.SpVoice")
+        spVoice.Speak(source)
 
     @staticmethod
     def record(query, translation):

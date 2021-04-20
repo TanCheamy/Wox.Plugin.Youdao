@@ -1,2 +1,2 @@
-pyperclip==1.8.2
-pywin32==300
+pyperclip
+pywin32
