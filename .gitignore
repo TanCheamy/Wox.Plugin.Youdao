@@ -9,3 +9,7 @@ __pycache__/
 
 # record file
 *.csv
+
+venv/
+
+.idea/

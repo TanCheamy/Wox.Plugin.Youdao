@@ -3,4 +3,6 @@
 from youdao import Main
 
 if __name__ == "__main__":
-    Main()
+    param = "speak"
+    Main().query(param);
+
