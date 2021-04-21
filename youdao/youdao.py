@@ -52,25 +52,17 @@ class Main(Wox):
             subtit = 'errorCode=%s' % errCode
             return [self.genformat(tit, subtit)]
 
-        # tSpeakUrl = response.get('tSpeakUrl', '')
         translation = response.get('translation', [])
         basic = response.get('basic', {})
         web = response.get('web', [])
 
         if translation:
             tit = translation[0]
-            subtit = '点击复制到剪贴板并收藏'
-            method = 'copy2clipboard'
+            subtit = '点击复制到剪贴板及发音并收藏'
+            method = 'copyclipboardAndSpeak'
             parameters = [q, translation[0]]
             res = self.genaction(tit, subtit, method, parameters)
             result.append(res)
-
-        if translation:
-            tit = q
-            subtit = '点击发音'
-            method = 'speak'
-            parameters = [q]
-            result.append(self.genaction(tit, subtit, method, parameters))
 
         if basic:
             for i in basic['explains']:
@@ -125,6 +117,16 @@ class Main(Wox):
         """
         spVoice = Dispatch("SAPI.SpVoice")
         spVoice.Speak(source)
+
+    def copyclipboardAndSpeak(self, query, translation):
+        """复制到剪切板及发音
+
+        :param translation: query
+        :param query: translation
+        :return:
+        """
+        self.copy2clipboard(query, translation)
+        self.speak(query)
 
     @staticmethod
     def record(query, translation):
