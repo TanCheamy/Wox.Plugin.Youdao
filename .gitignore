@@ -1,11 +1,14 @@
 # vscode local history file
 .history/
+.vscode/
 
-# wox
-wox.py
+# PyCharm
+.idea/
 
 # python cache
 __pycache__/
 
 # record file
 *.csv
+
+venv/
