@@ -52,7 +52,6 @@ class Main(Wox):
             subtit = 'errorCode=%s' % errCode
             return [self.genformat(tit, subtit)]
 
-        # tSpeakUrl = response.get('tSpeakUrl', '')
         translation = response.get('translation', [])
         basic = response.get('basic', {})
         web = response.get('web', [])
